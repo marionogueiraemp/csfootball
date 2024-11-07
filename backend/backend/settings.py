@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',  # if using Django REST Framework
+    'corsheaders',     # if using django-cors-headers
+    'core',            # add core app here
 ]
 
 MIDDLEWARE = [
