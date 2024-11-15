@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "simple-jwt-auth": "^0.11.1"
+  }
+}

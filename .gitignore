@@ -1,0 +1,23 @@
+# Virtual Environment
+.venv/
+.vscode/
+env/
+
+# IDE and Editor Files
+.vscode/
+*.swp
+
+# Bytecode Files
+*.pyc
+__pycache__/
+
+# Django Static and Media Files
+/staticfiles/
+/media/
+
+# OS-Specific Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
