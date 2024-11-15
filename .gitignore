@@ -1,23 +1,21 @@
-# Virtual Environment
+# Virtual Environments
 .venv/
-.vscode/
-env/
+backend/env/
 
 # IDE and Editor Files
 .vscode/
-*.swp
+
+# Front-End Build Files
+frontend/node_modules/
+frontend/build/
 
 # Bytecode Files
 *.pyc
 __pycache__/
 
 # Django Static and Media Files
-/staticfiles/
-/media/
-
-# OS-Specific Files
-.DS_Store
-Thumbs.db
+backend/staticfiles/
+backend/media/
 
 # Logs
 *.log
