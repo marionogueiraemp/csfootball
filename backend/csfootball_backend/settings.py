@@ -59,11 +59,7 @@ ASGI_APPLICATION = 'csfootball_backend.asgi.application'
 
 # DATABASE
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://csfootball_db_user:Fszl42rpf3LmXelK2OFpyR8EFiAB7dm6@dpg-csueftjqf0us738qtmh0-a/csfootball_db',
-        conn_max_age=600,
-        ssl_require=True,
-    )
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
 
 # AUTHENTICATION
