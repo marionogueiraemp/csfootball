@@ -37,6 +37,7 @@ def notify_match_result(sender, instance, **kwargs):
         )
 
 
+@receiver(post_save, sender=Notification)
 def broadcast_notification(sender, instance, created, **kwargs):
     if created:
         channel_layer = get_channel_layer()
