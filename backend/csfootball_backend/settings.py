@@ -59,7 +59,9 @@ ASGI_APPLICATION = 'csfootball_backend.asgi.application'
 
 # DATABASE
 DATABASES = {
-    'default': dj_database_url.config(default=config('DATABASE_URL'))
+    'default': dj_database_url.parse(
+        config('DATABASE_URL', default='postgres://localhost:5432/default_db')
+    )
 }
 
 # AUTHENTICATION
