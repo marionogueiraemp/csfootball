@@ -6,6 +6,8 @@ from .models import Notification
 from teams.models import PlayerApplication, TransferRequest
 from competitions.models import Match
 
+# Notify team owner when a player applies to a team
+
 
 @receiver(post_save, sender=PlayerApplication)
 def notify_team_application(sender, instance, created, **kwargs):
@@ -15,6 +17,8 @@ def notify_team_application(sender, instance, created, **kwargs):
             message=f"New application from {
                 instance.player.username} to join {instance.team.name}."
         )
+
+# Notify team owner about a transfer request
 
 
 @receiver(post_save, sender=TransferRequest)
@@ -26,15 +30,19 @@ def notify_transfer_request(sender, instance, created, **kwargs):
                 instance.from_team.name} to {instance.to_team.name}."
         )
 
+# Notify league manager when a match result is recorded
+
 
 @receiver(post_save, sender=Match)
 def notify_match_result(sender, instance, **kwargs):
     if instance.team1_score is not None and instance.team2_score is not None:
         Notification.objects.create(
-            user=instance.competition.league_manager,  # Example recipient
+            user=instance.competition.league_manager,
             message=f"Match result: {instance.team1.name} {
-                instance.team1_score} - {instance.team2_score} {instance.team2.name}"
+                instance.team1_score} - {instance.team2_score} {instance.team2.name}."
         )
+
+# Broadcast notification over WebSocket channels
 
 
 @receiver(post_save, sender=Notification)
