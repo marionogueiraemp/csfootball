@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
+import dj_database_url
 
 # Base Directory
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -9,7 +10,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 SECRET_KEY = config('DJANGO_SECRET_KEY', default='devMNmn123')
 DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', default='127.0.0.1').split(',')
+ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS',
+                       default='csfootball.onrender.com').split(',')
 
 # APPS
 INSTALLED_APPS = [
@@ -57,14 +59,11 @@ ASGI_APPLICATION = 'csfootball_backend.asgi.application'
 
 # DATABASE
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432'),
-    }
+    'default': dj_database_url.config(
+        default='postgresql://csfootball_db_user:Fszl42rpf3LmXelK2OFpyR8EFiAB7dm6@dpg-csueftjqf0us738qtmh0-a/csfootball_db',
+        conn_max_age=600,
+        ssl_require=True,
+    )
 }
 
 # AUTHENTICATION
