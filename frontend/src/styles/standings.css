@@ -1,0 +1,29 @@
+.league-standings {
+    padding: 20px;
+    margin: auto;
+    max-width: 800px;
+}
+
+.standings-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.standings-table th,
+.standings-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.standings-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
