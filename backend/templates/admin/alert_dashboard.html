@@ -1,0 +1,41 @@
+{% extends "admin/base_site.html" %} {% block content %}
+<div class="alert-dashboard">
+  <div class="dashboard-header">
+    <h2>Cache Monitoring Alerts</h2>
+    <div class="filter-controls">
+      <select id="timeRange">
+        <option value="24">Last 24 Hours</option>
+        <option value="48">Last 48 Hours</option>
+        <option value="168">Last Week</option>
+      </select>
+      <button id="refreshAlerts">Refresh</button>
+    </div>
+  </div>
+
+  <div class="alert-summary">
+    <div class="stat-box">
+      <h3>Total Alerts</h3>
+      <span id="totalAlerts">0</span>
+    </div>
+    <div class="stat-box">
+      <h3>Critical Alerts</h3>
+      <span id="criticalAlerts">0</span>
+    </div>
+  </div>
+
+  <div class="alert-list">
+    <table id="alertTable">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Type</th>
+          <th>Message</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="alertBody"></tbody>
+    </table>
+  </div>
+</div>
+
+{% include "admin/alert_dashboard_js.html" %} {% endblock %}

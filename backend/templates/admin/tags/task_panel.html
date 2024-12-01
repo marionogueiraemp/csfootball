@@ -1,0 +1,26 @@
+<div class="task-panel">
+  <h3>Task Statistics</h3>
+  <div class="task-stats">
+    <div class="stat-item">
+      <label>Success Rate</label>
+      <span>{{ task_stats.success_rate|percentage }}</span>
+    </div>
+    <div class="stat-item">
+      <label>Total Tasks</label>
+      <span>{{ task_stats.total_tasks }}</span>
+    </div>
+  </div>
+
+  <div class="task-history">
+    <h4>Recent Tasks</h4>
+    {% for task in task_stats.history %}
+    <div class="task-item {{ task.status }}">
+      <span class="task-name">{{ task.task }}</span>
+      <span class="task-time">{{ task.timestamp|format_timestamp }}</span>
+      {% if task.error %}
+      <div class="task-error">{{ task.error }}</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>

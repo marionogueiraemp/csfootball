@@ -1,0 +1,62 @@
+{% extends "admin/base_site.html" %} {% block content %}
+<div class="module">
+  <h2>Cache Statistics</h2>
+  <div class="stats-container">
+    <div class="stat-box">
+      <h3>Cache Hits</h3>
+      <p id="cache-hits">{{ stats.hits }}</p>
+    </div>
+    <div class="stat-box">
+      <h3>Cache Misses</h3>
+      <p id="cache-misses">{{ stats.misses }}</p>
+    </div>
+    <div class="stat-box">
+      <h3>Total Keys</h3>
+      <p id="cache-keys">{{ stats.keys }}</p>
+    </div>
+  </div>
+  <button id="clear-cache" class="button">Clear Cache</button>
+</div>
+
+<style>
+  .stats-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+  }
+  .stat-box {
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    text-align: center;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    function updateStats() {
+      fetch("/admin/cache-stats/")
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("cache-hits").textContent = data.hits;
+          document.getElementById("cache-misses").textContent = data.misses;
+          document.getElementById("cache-keys").textContent = data.keys;
+        });
+    }
+
+    document
+      .getElementById("clear-cache")
+      .addEventListener("click", function () {
+        fetch("/admin/clear-cache/", { method: "POST" })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === "success") {
+              updateStats();
+            }
+          });
+      });
+
+    setInterval(updateStats, 30000);
+    updateStats();
+  });
+</script>

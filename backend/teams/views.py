@@ -1,56 +1,72 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from .models import Team, PlayerApplication, TransferRequest
 from .serializers import TeamSerializer, PlayerApplicationSerializer, TransferRequestSerializer
-from users.permissions import IsTeamOwner
-from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
+from csfootball_backend.decorators import cache_response
 
 
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
-    permission_classes = [permissions.IsAuthenticated, IsTeamOwner]
 
-    def get_queryset(self):
-        return Team.objects.filter(owner=self.request.user)
+    @cache_response()
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
-    def perform_create(self, serializer):
-        if Team.objects.filter(owner=self.request.user).exists():
-            raise ValidationError(
-                "You already own a team and cannot create another.")
-        serializer.save(owner=self.request.user)
-
-    def retrieve(self, request, pk=None):
+    @action(detail=True, methods=['post'])
+    def apply(self, request, pk=None):
         team = self.get_object()
-        players = team.players.annotate(
-            goals=models.Sum('matchstats__goals'),
-            assists=models.Sum('matchstats__assists'),
-            yellow_cards=models.Sum('matchstats__yellow_cards'),
-            red_cards=models.Sum('matchstats__red_cards'),
+        application = PlayerApplication.objects.create(
+            player=request.user,
+            team=team,
+            status='PENDING'
         )
-        transfers = team.transfers.all()
-
-        return Response({
-            "team": TeamSerializer(team).data,
-            "players": players.values("id", "username", "goals", "assists", "yellow_cards", "red_cards"),
-            "transfers": TransferSerializer(transfers, many=True).data,
-        })
+        return Response(PlayerApplicationSerializer(application).data)
 
 
 class PlayerApplicationViewSet(viewsets.ModelViewSet):
+    queryset = PlayerApplication.objects.all()
     serializer_class = PlayerApplicationSerializer
-    permission_classes = [permissions.IsAuthenticated, IsTeamOwner]
 
-    def get_queryset(self):
-        return PlayerApplication.objects.filter(team__owner=self.request.user)
+    @action(detail=True, methods=['post'])
+    def accept(self, request, pk=None):
+        application = self.get_object()
+        application.status = 'ACCEPTED'
+        application.save()
+        application.team.players.add(application.player)
+        return Response({'status': 'accepted'})
 
-    def perform_create(self, serializer):
-        serializer.save(player=self.request.user)
+    @action(detail=True, methods=['post'])
+    def reject(self, request, pk=None):
+        application = self.get_object()
+        application.status = 'REJECTED'
+        application.save()
+        return Response({'status': 'rejected'})
 
 
 class TransferRequestViewSet(viewsets.ModelViewSet):
+    queryset = TransferRequest.objects.all()
     serializer_class = TransferRequestSerializer
-    permission_classes = [permissions.IsAuthenticated, IsTeamOwner]
 
-    def get_queryset(self):
-        return TransferRequest.objects.filter(to_team__owner=self.request.user)
+    @action(detail=True, methods=['post'])
+    def accept(self, request, pk=None):
+        transfer = self.get_object()
+        transfer.status = 'ACCEPTED'
+        transfer.save()
+
+        player = transfer.player
+        from_team = transfer.from_team
+        to_team = transfer.to_team
+
+        from_team.players.remove(player)
+        to_team.players.add(player)
+
+        return Response({'status': 'accepted'})
+
+    @action(detail=True, methods=['post'])
+    def reject(self, request, pk=None):
+        transfer = self.get_object()
+        transfer.status = 'REJECTED'
+        transfer.save()
+        return Response({'status': 'rejected'})

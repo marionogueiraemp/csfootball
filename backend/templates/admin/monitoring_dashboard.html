@@ -1,0 +1,59 @@
+{% extends "admin/base_site.html" %} {% load dashboard_filters dashboard_tags %}
+{% block content %}
+<div class="monitoring-dashboard">
+  <div class="dashboard-header">
+    <h2>Cache Monitoring Dashboard</h2>
+    <div class="refresh-controls">
+      <select id="refreshInterval">
+        <option value="30">30 seconds</option>
+        <option value="60">1 minute</option>
+        <option value="300">5 minutes</option>
+      </select>
+      <button id="refreshDashboard">Refresh Now</button>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    {% show_stats_panel %} {% show_alert_panel %} {% show_task_panel %}
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-box">
+      <h3>Cache Performance</h3>
+      <div id="cacheStats">
+        <p>Hit Rate: <span id="hitRate">{{ cache_stats.hit_rate }}%</span></p>
+        <p>
+          Memory Usage:
+          <span id="memoryUsage">{{ cache_stats.memory_usage }}MB</span>
+        </p>
+        <p>
+          Total Keys: <span id="totalKeys">{{ cache_stats.total_keys }}</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="stat-box">
+      <h3>Recent Alerts</h3>
+      <div id="alertsList">
+        {% for alert in recent_alerts %}
+        <div class="alert-item {{ alert.type }}">{{ alert.message }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="stat-box">
+      <h3>Task Statistics</h3>
+      <div id="taskStats">
+        <p>
+          Success Rate:
+          <span id="taskSuccessRate">{{ task_stats.success_rate }}%</span>
+        </p>
+        <p>
+          Total Tasks: <span id="totalTasks">{{ task_stats.total_tasks }}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% include "admin/tags/panel_styles.css" %} {% include
+"admin/tags/panel_scripts.js" %} {% endblock %}

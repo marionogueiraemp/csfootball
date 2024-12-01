@@ -1,0 +1,16 @@
+<div class="alert-panel">
+  <h3>Recent Alerts</h3>
+  <div class="alert-list">
+    {% for alert in alerts %}
+    <div class="alert-item {{ alert.type|alert_class }}">
+      <div class="alert-header">
+        <span class="alert-type">{{ alert.type|title }}</span>
+        <span class="alert-time">{{ alert.timestamp|format_timestamp }}</span>
+      </div>
+      <div class="alert-message">{{ alert.message }}</div>
+    </div>
+    {% empty %}
+    <div class="no-alerts">No recent alerts</div>
+    {% endfor %}
+  </div>
+</div>

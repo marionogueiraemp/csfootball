@@ -1,24 +1,26 @@
 from django.contrib import admin
 from .models import Competition, Match, PlayerStats
-import datetime
 
-admin.site.register(Match)
-admin.site.register(PlayerStats)
 
 @admin.register(Competition)
 class CompetitionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'competition_type', 'created_at')
-    actions = ['generate_fixtures']
+    list_display = ('name', 'competition_type',
+                    'start_date', 'end_date', 'is_active')
+    list_filter = ('competition_type', 'is_active')
+    search_fields = ('name',)
 
-    def generate_fixtures(self, request, queryset):
-        """
-        Custom admin action to generate fixtures for selected competitions.
-        """
-        for competition in queryset:
-            if competition.teams.count() > 1:  # Ensure there are at least 2 teams
-                competition.generate_fixtures(start_date=datetime.date.today(), home_and_away=True)
-                self.message_user(request, f"Fixtures generated for {competition.name}")
-            else:
-                self.message_user(request, f"Not enough teams to generate fixtures for {competition.name}", level='warning')
 
-    generate_fixtures.short_description = "Generate fixtures for selected competitions"
+@admin.register(Match)
+class MatchAdmin(admin.ModelAdmin):
+    list_display = ('competition', 'home_team',
+                    'away_team', 'match_date', 'status')
+    list_filter = ('competition', 'status')
+    search_fields = ('home_team__name', 'away_team__name')
+
+
+@admin.register(PlayerStats)
+class PlayerStatsAdmin(admin.ModelAdmin):
+    list_display = ('player', 'match', 'goals', 'assists',
+                    'yellow_cards', 'red_cards')
+    list_filter = ('match',)
+    search_fields = ('player__username',)

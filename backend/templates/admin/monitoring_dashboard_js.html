@@ -1,0 +1,59 @@
+<script>
+  class MonitoringDashboard {
+    constructor() {
+      this.refreshInterval = 30;
+      this.intervalId = null;
+      this.setupEventListeners();
+      this.startAutoRefresh();
+    }
+
+    setupEventListeners() {
+      document
+        .getElementById("refreshInterval")
+        .addEventListener("change", (e) => {
+          this.refreshInterval = parseInt(e.target.value);
+          this.restartAutoRefresh();
+        });
+
+      document
+        .getElementById("refreshDashboard")
+        .addEventListener("click", () => {
+          this.refreshData();
+        });
+    }
+
+    async refreshData() {
+      const response = await fetch("/api/monitoring/stats/");
+      const data = await response.json();
+      this.updateDashboard(data);
+    }
+
+    updateDashboard(data) {
+      document.getElementById(
+        "hitRate"
+      ).textContent = `${data.cache_stats.hit_rate}%`;
+      document.getElementById(
+        "memoryUsage"
+      ).textContent = `${data.cache_stats.memory_usage}MB`;
+      document.getElementById("totalKeys").textContent =
+        data.cache_stats.total_keys;
+
+      this.updateAlertsList(data.recent_alerts);
+      this.updateTaskStats(data.task_stats);
+    }
+
+    startAutoRefresh() {
+      this.intervalId = setInterval(
+        () => this.refreshData(),
+        this.refreshInterval * 1000
+      );
+    }
+
+    restartAutoRefresh() {
+      if (this.intervalId) clearInterval(this.intervalId);
+      this.startAutoRefresh();
+    }
+  }
+
+  const dashboard = new MonitoringDashboard();
+</script>

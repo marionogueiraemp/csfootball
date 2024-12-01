@@ -1,0 +1,17 @@
+<div class="stats-panel">
+  <h3>Cache Statistics</h3>
+  <div class="stats-grid">
+    <div class="stat-item">
+      <label>Hit Rate</label>
+      <span>{{ cache_stats.hit_rate|percentage }}</span>
+    </div>
+    <div class="stat-item">
+      <label>Memory Usage</label>
+      <span>{{ cache_stats.memory_usage|format_memory }}</span>
+    </div>
+    <div class="stat-item">
+      <label>Total Keys</label>
+      <span>{{ cache_stats.total_keys }}</span>
+    </div>
+  </div>
+</div>

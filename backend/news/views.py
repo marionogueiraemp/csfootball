@@ -1,24 +1,14 @@
-from rest_framework import viewsets, permissions
-from rest_framework.permissions import IsAuthenticated
-from .models import NewsPost, Interview, HistoricalEvent
-from .serializers import NewsPostSerializer, InterviewSerializer, HistoricalEventSerializer
-from users.permissions import IsNewsManager
+from rest_framework import viewsets
+from csfootball_backend.permissions import IsNewsManager
+from .models import Article
+from .serializers import ArticleSerializer
 
 
-class NewsPostViewSet(viewsets.ModelViewSet):
-    queryset = NewsPost.objects.all()
-    serializer_class = NewsPostSerializer
-    permission_classes = [permissions.IsAuthenticated, IsNewsManager]
+class ArticleViewSet(viewsets.ModelViewSet):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
 
-
-class InterviewViewSet(viewsets.ModelViewSet):
-    queryset = Interview.objects.all()
-    serializer_class = InterviewSerializer
-    permission_classes = [permissions.IsAuthenticated, IsNewsManager]
-
-
-class HistoricalEventViewSet(viewsets.ModelViewSet):
-    queryset = HistoricalEvent.objects.all().order_by(
-        '-event_date')  # Updated to use event_date
-    serializer_class = HistoricalEventSerializer
-    permission_classes = [permissions.IsAuthenticated, IsNewsManager]
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsNewsManager()]
+        return []

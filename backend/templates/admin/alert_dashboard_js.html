@@ -1,0 +1,53 @@
+<script>
+  class AlertDashboard {
+    constructor() {
+      this.timeRange = 24;
+      this.setupEventListeners();
+      this.refreshData();
+    }
+
+    setupEventListeners() {
+      document.getElementById("timeRange").addEventListener("change", (e) => {
+        this.timeRange = parseInt(e.target.value);
+        this.refreshData();
+      });
+
+      document.getElementById("refreshAlerts").addEventListener("click", () => {
+        this.refreshData();
+      });
+    }
+
+    async refreshData() {
+      const response = await fetch(
+        `/api/monitoring/alerts/?hours=${this.timeRange}`
+      );
+      const data = await response.json();
+      this.updateDashboard(data);
+    }
+
+    updateDashboard(data) {
+      document.getElementById("totalAlerts").textContent = data.total;
+      document.getElementById("criticalAlerts").textContent = data.critical;
+
+      const tbody = document.getElementById("alertBody");
+      tbody.innerHTML = "";
+
+      data.alerts.forEach((alert) => {
+        tbody.appendChild(this.createAlertRow(alert));
+      });
+    }
+
+    createAlertRow(alert) {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+            <td>${new Date(alert.timestamp).toLocaleString()}</td>
+            <td>${alert.type}</td>
+            <td>${alert.message}</td>
+            <td>${alert.status}</td>
+        `;
+      return row;
+    }
+  }
+
+  const dashboard = new AlertDashboard();
+</script>

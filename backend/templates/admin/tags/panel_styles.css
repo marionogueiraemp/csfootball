@@ -1,0 +1,38 @@
+<style>
+.stats-panel, .alert-panel, .task-panel {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 10px;
+}
+
+.alert-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.task-history {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.task-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.task-item.success { color: #28a745; }
+.task-item.failure { color: #dc3545; }
+</style>

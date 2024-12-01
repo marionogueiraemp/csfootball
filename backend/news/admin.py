@@ -1,14 +1,13 @@
 from django.contrib import admin
-from .models import NewsPost, Interview, HistoricalEvent
+from .models import Article
 
-@admin.register(NewsPost)
-class NewsPostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'created_at', 'updated_at')
 
-@admin.register(Interview)
-class InterviewAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'created_at')
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = ('title', 'author', 'created_at', 'is_published')
+    list_filter = ('is_published', 'article_type')
+    search_fields = ('title', 'content')
 
-@admin.register(HistoricalEvent)
-class HistoricalEventAdmin(admin.ModelAdmin):
-    list_display = ('event_title', 'event_date')
+
+# Only register if not already registered
+if not admin.site.is_registered(Article):
+    admin.site.register(Article, ArticleAdmin)

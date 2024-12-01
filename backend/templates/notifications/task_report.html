@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .report-container {
+        max-width: 800px;
+        margin: 0 auto;
+        font-family: Arial, sans-serif;
+      }
+      .summary-box {
+        background: #f5f5f5;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .task-history {
+        border: 1px solid #ddd;
+        padding: 15px;
+      }
+
+      .success {
+        color: green;
+      }
+      .failure {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="report-container">
+      <h2>Cache Monitoring Task Report</h2>
+      <div class="summary-box">
+        <h3>Summary</h3>
+        <p>Total Tasks: {{ report.summary.total_tasks }}</p>
+        <p>Success Rate: {{ report.summary.success_rate }}%</p>
+        <p>Failure Rate: {{ report.summary.failure_rate }}%</p>
+      </div>
+      <div class="task-history">
+        <h3>Recent Task History</h3>
+        {% for task in report.task_history %}
+        <div class="{{ task.status }}">
+          {{ task.task }}: {{ task.status }} at {{ task.timestamp }}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>

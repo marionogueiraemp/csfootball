@@ -1,0 +1,27 @@
+from django.apps import AppConfig
+from .cache import register_cache_invalidation
+
+
+class CsfootballBackendConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'csfootball_backend'
+
+    def ready(self):
+        from competitions.models import Competition, Match, PlayerStats
+        from teams.models import Team
+        from news.models import Article
+        from forum.models import ForumCategory, ForumThread, ForumPost
+
+        models_to_cache = [
+            Competition,
+            Match,
+            PlayerStats,
+            Team,
+            Article,
+            ForumCategory,
+            ForumThread,
+            ForumPost
+        ]
+
+        for model in models_to_cache:
+            register_cache_invalidation(model)

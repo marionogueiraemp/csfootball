@@ -1,0 +1,17 @@
+CACHE MONITORING ALERT
+=====================
+
+Type: {{ alert.type }}
+Time: {{ alert.timestamp }}
+
+MESSAGE
+-------
+{{ alert.message }}
+
+ACTIONS REQUIRED
+---------------
+Please check the monitoring dashboard for more details and take appropriate action.
+
+---
+This is an automated alert from the Cache Monitoring System.
+For immediate assistance, please contact the system administrator.

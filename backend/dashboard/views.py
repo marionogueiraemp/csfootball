@@ -31,7 +31,7 @@ class LeagueManagerDashboardView(APIView):
     def get(self, request):
         competitions = Competition.objects.filter(league_manager=request.user)
         applications = PlayerApplication.objects.filter(
-            team__competition__league_manager=request.user, status='PENDING')
+            team__competitions__league_manager=request.user, status='PENDING')
         return Response({
             "competitions": competitions.values("name", "competition_type", "created_at"),
             "pending_applications": applications.count(),

@@ -1,29 +1,25 @@
 from django.db import models
-from django.utils import timezone
+from users.models import CustomUser
+from csfootball_backend.decorators import cache_model
 
-class NewsPost(models.Model):
+
+@cache_model()
+class Article(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
+    author = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='articles')
+    image = models.ImageField(upload_to='news_images/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    author = models.CharField(max_length=100)
+
+    ARTICLE_TYPES = [
+        ('NEWS', 'News'),
+        ('INTERVIEW', 'Interview'),
+        ('BLOG', 'Blog Post')
+    ]
+    article_type = models.CharField(max_length=10, choices=ARTICLE_TYPES)
+    is_published = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
-
-class Interview(models.Model):
-    title = models.CharField(max_length=200)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    author = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.title
-
-class HistoricalEvent(models.Model):
-    event_title = models.CharField(max_length=200)
-    event_description = models.TextField()
-    event_date = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return self.event_title

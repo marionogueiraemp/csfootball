@@ -1,20 +1,29 @@
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-from .models import ForumSection, Thread, Post
-from .serializers import ForumSectionSerializer, ThreadSerializer, PostSerializer
-from users.permissions import IsNewsManager  # Assuming custom permissions for News Manager
+from rest_framework import viewsets, permissions
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from .models import ForumCategory, ForumThread, ForumPost
+from .serializers import ForumCategorySerializer, ForumThreadSerializer, ForumPostSerializer
 
-class ForumSectionViewSet(viewsets.ModelViewSet):
-    queryset = ForumSection.objects.all()
-    serializer_class = ForumSectionSerializer
-    permission_classes = [IsAuthenticated, IsNewsManager]
 
-class ThreadViewSet(viewsets.ModelViewSet):
-    queryset = Thread.objects.all()
-    serializer_class = ThreadSerializer
-    permission_classes = [IsAuthenticated, IsNewsManager]
+class ForumCategoryViewSet(viewsets.ModelViewSet):
+    queryset = ForumCategory.objects.all()
+    serializer_class = ForumCategorySerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated, IsNewsManager]
+
+class ForumThreadViewSet(viewsets.ModelViewSet):
+    queryset = ForumThread.objects.all()
+    serializer_class = ForumThreadSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
+
+
+class ForumPostViewSet(viewsets.ModelViewSet):
+    queryset = ForumPost.objects.all()
+    serializer_class = ForumPostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)

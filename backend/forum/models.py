@@ -1,31 +1,47 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-from django.utils import timezone
+from users.models import CustomUser
+from csfootball_backend.decorators import cache_model
 
-User = get_user_model()
 
-class ForumSection(models.Model):
-    title = models.CharField(max_length=200)
+@cache_model()
+class ForumCategory(models.Model):
+    name = models.CharField(max_length=100)
     description = models.TextField()
+    order = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name_plural = 'Forum Categories'
+        ordering = ['order']
 
     def __str__(self):
-        return self.title
+        return self.name
 
-class Thread(models.Model):
-    section = models.ForeignKey(ForumSection, on_delete=models.CASCADE, related_name="threads")
+
+@cache_model()
+class ForumThread(models.Model):
     title = models.CharField(max_length=200)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(
+        ForumCategory, on_delete=models.CASCADE, related_name='threads')
+    creator = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='forum_threads')
     created_at = models.DateTimeField(auto_now_add=True)
+    is_pinned = models.BooleanField(default=False)
+    is_locked = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
 
-class Post(models.Model):
-    thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name="posts")
+
+@cache_model()
+class ForumPost(models.Model):
+    thread = models.ForeignKey(
+        ForumThread, on_delete=models.CASCADE, related_name='posts')
+    author = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='forum_posts')
     content = models.TextField()
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_edited = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Post by {self.created_by} on {self.created_at}"
+        return f"Post by {self.author.username} in {self.thread.title}"

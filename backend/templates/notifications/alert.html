@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .alert-container {
+        max-width: 600px;
+        margin: 0 auto;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .alert-box {
+        background: #fff3f3;
+        border-left: 4px solid #ff4444;
+        padding: 15px;
+        margin: 20px 0;
+      }
+      .alert-timestamp {
+        color: #666;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="alert-container">
+      <h2>Cache Monitoring Alert</h2>
+      <div class="alert-box">
+        <h3>{{ alert.type }}</h3>
+        <p>{{ alert.message }}</p>
+        <p class="alert-timestamp">Detected at: {{ alert.timestamp }}</p>
+      </div>
+    </div>
+  </body>
+</html>

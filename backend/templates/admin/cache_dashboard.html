@@ -1,0 +1,108 @@
+{% extends "admin/base_site.html" %} {% load static %} {% block content %}
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Cache Monitoring Dashboard</h1>
+    <div class="refresh-controls">
+      <button id="refresh-now">Refresh Now</button>
+      <select id="refresh-interval">
+        <option value="30000">30 seconds</option>
+        <option value="60000">1 minute</option>
+        <option value="300000">5 minutes</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-panel">
+      <h3>Cache Performance</h3>
+      <canvas id="performance-chart"></canvas>
+    </div>
+    <div class="stat-panel">
+      <h3>Cache Size</h3>
+      <div id="cache-size"></div>
+    </div>
+    <div class="stat-panel">
+      <h3>Most Accessed Keys</h3>
+      <div id="top-keys"></div>
+    </div>
+  </div>
+
+  <div class="actions-panel">
+    <button id="clear-all-cache">Clear All Cache</button>
+    <button id="clear-expired">Clear Expired Keys</button>
+    <button id="export-stats">Export Statistics</button>
+  </div>
+</div>
+
+{% include "admin/cache_dashboard_js.html" %} {% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  class CacheDashboard {
+    constructor() {
+      this.performanceChart = null;
+      this.refreshInterval = 30000;
+      this.initializeCharts();
+      this.setupEventListeners();
+      this.startAutoRefresh();
+    }
+
+    initializeCharts() {
+      const ctx = document.getElementById("performance-chart").getContext("2d");
+      this.performanceChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: "Cache Hits",
+              data: [],
+              borderColor: "#4CAF50",
+            },
+            {
+              label: "Cache Misses",
+              data: [],
+              borderColor: "#F44336",
+            },
+          ],
+        },
+      });
+    }
+
+    setupEventListeners() {
+      document
+        .getElementById("refresh-now")
+        .addEventListener("click", () => this.updateDashboard());
+      document
+        .getElementById("refresh-interval")
+        .addEventListener("change", (e) => {
+          this.refreshInterval = parseInt(e.target.value);
+          this.startAutoRefresh();
+        });
+      document
+        .getElementById("clear-all-cache")
+        .addEventListener("click", () => this.clearCache());
+      document
+        .getElementById("export-stats")
+        .addEventListener("click", () => this.exportStats());
+    }
+
+    async updateDashboard() {
+      const stats = await this.fetchCacheStats();
+      this.updateCharts(stats);
+      this.updateTopKeys(stats.topKeys);
+      this.updateCacheSize(stats.size);
+    }
+
+    startAutoRefresh() {
+      if (this.refreshTimer) clearInterval(this.refreshTimer);
+      this.refreshTimer = setInterval(
+        () => this.updateDashboard(),
+        this.refreshInterval
+      );
+    }
+  }
+
+  const dashboard = new CacheDashboard();
+</script>

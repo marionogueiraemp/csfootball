@@ -1,17 +1,18 @@
 from rest_framework import serializers
-from .models import NewsPost, Interview, HistoricalEvent
+from .models import Article
 
-class NewsPostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = NewsPost
-        fields = ['id', 'title', 'content', 'created_at', 'updated_at', 'author']
 
-class InterviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Interview
-        fields = ['id', 'title', 'content', 'created_at', 'author']
+class ArticleSerializer(serializers.ModelSerializer):
+    author_name = serializers.CharField(
+        source='author.username', read_only=True)
 
-class HistoricalEventSerializer(serializers.ModelSerializer):
     class Meta:
-        model = HistoricalEvent
-        fields = ['id', 'event_title', 'event_description', 'event_date']
+        model = Article
+        fields = ['id', 'title', 'content', 'author', 'author_name',
+                  'image', 'created_at', 'updated_at', 'article_type',
+                  'is_published']
+        read_only_fields = ['author']
+
+    def create(self, validated_data):
+        validated_data['author'] = self.context['request'].user
+        return super().create(validated_data)

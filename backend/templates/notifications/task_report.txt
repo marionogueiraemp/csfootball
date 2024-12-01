@@ -1,0 +1,17 @@
+Cache Monitoring Task Report - {{ report.date }}
+
+SUMMARY
+-------
+Total Tasks: {{ report.summary.total_tasks }}
+Success Rate: {{ report.summary.success_rate }}%
+Failure Rate: {{ report.summary.failure_rate }}%
+
+RECENT TASK HISTORY
+------------------
+{% for task in report.task_history %}
+* {{ task.task }}: {{ task.status }} at {{ task.timestamp }}
+{% endfor %}
+
+---
+This is an automated report from the Cache Monitoring System.
+For more details, please visit the monitoring dashboard.
